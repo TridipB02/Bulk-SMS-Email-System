@@ -1,0 +1,71 @@
+package com.nic.auth.service;
+
+import com.nic.auth.dto.*;
+import com.nic.auth.entity.User;
+import com.nic.auth.repository.UserRepository;
+import com.nic.auth.security.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final OtpService otpService;
+    private final UserServiceClient userServiceClient;
+
+    public String register(RegisterRequest req) {
+        if (userRepository.existsByEmail(req.getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
+        User user = new User();
+        user.setName(req.getName());
+        user.setEmail(req.getEmail());
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        userRepository.save(user);
+
+        userServiceClient.createUserProfile(req.getName(), req.getEmail(), user.getRole().name());
+
+        otpService.generateAndSendOtp(req.getEmail());
+        return "Registered successfully. OTP sent to " + req.getEmail();
+    }
+
+    public AuthResponse login(LoginRequest req) {
+        User user = userRepository.findByEmail(req.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
+        }
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name(), user.getId());
+        return new AuthResponse(token, user.getEmail(), user.getRole().name());
+    }
+
+    public void sendOtp(String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new RuntimeException("No user found with this email");
+        }
+        otpService.generateAndSendOtp(email);
+    }
+
+    public AuthResponse verifyOtpAndLogin(OtpVerifyRequest req) {
+        boolean valid = otpService.verifyOtp(req.getEmail(), req.getOtp());
+        if (!valid) {
+            throw new RuntimeException("Invalid or expired OTP");
+        }
+        User user = userRepository.findByEmail(req.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name(), user.getId());
+        return new AuthResponse(token, user.getEmail(), user.getRole().name());
+    }
+
+    public User getMe(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+}
