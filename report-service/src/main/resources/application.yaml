@@ -1,0 +1,19 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: report-service
+
+jwt:
+  secret: ${JWT_SECRET:YOUR_JWT_SECRET}
+
+services:
+  messaging-service:
+    url: ${MESSAGING_SERVICE_URL:http://localhost:8085}
+  campaign-service:
+    url: ${CAMPAIGN_SERVICE_URL:http://localhost:8084}
+
+logging:
+  level:
+    com.nic.report: DEBUG
