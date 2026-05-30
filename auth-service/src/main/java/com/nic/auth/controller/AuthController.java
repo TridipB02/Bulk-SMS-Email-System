@@ -40,4 +40,10 @@ public class AuthController {
     public ResponseEntity<?> getMe(@AuthenticationPrincipal String email) {
         return ResponseEntity.ok(authService.getMe(email));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            @RequestBody RefreshTokenRequest req) {
+        return ResponseEntity.ok(authService.refreshToken(req));
+    }
 }

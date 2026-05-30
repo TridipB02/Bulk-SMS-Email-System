@@ -32,6 +32,28 @@ public class JwtUtil {
                 .compact();
     }
 
+    @Value("${jwt.refresh-expiration}")
+    private long refreshExpiration;
+
+    public String generateRefreshToken(String email) {
+        return Jwts.builder()
+                .subject(email)
+                .claim("type", "refresh")
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .signWith(getKey())
+                .compact();
+    }
+
+    public boolean isRefreshToken(String token) {
+        try {
+            String type = getClaims(token).get("type", String.class);
+            return "refresh".equals(type);
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
     }

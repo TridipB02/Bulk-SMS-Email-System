@@ -7,6 +7,7 @@ import com.nic.auth.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +42,19 @@ public class AuthService {
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name(), user.getId());
-        return new AuthResponse(token, user.getEmail(), user.getRole().name());
+
+        String accessToken = jwtUtil.generateToken(
+                user.getEmail(), user.getRole().name(), user.getId());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+
+        // Save refresh token to DB
+        user.setRefreshToken(refreshToken);
+        user.setRefreshTokenExpiry(
+                LocalDateTime.now().plusDays(7));
+        userRepository.save(user);
+
+        return new AuthResponse(accessToken, refreshToken,
+                user.getEmail(), user.getRole().name());
     }
 
     public void sendOtp(String email) {
@@ -60,8 +72,46 @@ public class AuthService {
         User user = userRepository.findByEmail(req.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name(), user.getId());
-        return new AuthResponse(token, user.getEmail(), user.getRole().name());
+        String accessToken = jwtUtil.generateToken(
+                user.getEmail(), user.getRole().name(), user.getId());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+
+        user.setRefreshToken(refreshToken);
+        user.setRefreshTokenExpiry(LocalDateTime.now().plusDays(7));
+        userRepository.save(user);
+
+        return new AuthResponse(accessToken, refreshToken,
+                user.getEmail(), user.getRole().name());
+    }
+
+    public AuthResponse refreshToken(RefreshTokenRequest req) {
+        String token = req.getRefreshToken();
+
+        // Validate it is a refresh token
+        if (!jwtUtil.isTokenValid(token) || !jwtUtil.isRefreshToken(token)) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+
+        String email = jwtUtil.extractEmail(token);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Check it matches what we stored
+        if (!token.equals(user.getRefreshToken())) {
+            throw new RuntimeException("Refresh token mismatch");
+        }
+
+        // Check expiry
+        if (user.getRefreshTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Refresh token expired — please login again");
+        }
+
+        // Issue new access token
+        String newAccessToken = jwtUtil.generateToken(
+                user.getEmail(), user.getRole().name(), user.getId());
+
+        return new AuthResponse(newAccessToken, token,
+                user.getEmail(), user.getRole().name());
     }
 
     public User getMe(String email) {
