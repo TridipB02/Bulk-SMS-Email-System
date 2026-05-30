@@ -39,7 +39,7 @@ public class CampaignService {
             campaign.setScheduledAt(req.getScheduledAt());
             campaign.setStatus(Campaign.CampaignStatus.SCHEDULED);
         } else {
-            campaign.setStatus(Campaign.CampaignStatus.PENDING_APPROVAL);
+            campaign.setStatus(Campaign.CampaignStatus.DRAFT);
         }
 
         return CampaignDTO.from(campaignRepository.save(campaign));
@@ -135,5 +135,76 @@ public class CampaignService {
             campaign.setSentAt(LocalDateTime.now());
         }
         campaignRepository.save(campaign);
+    }
+
+    // Edit a draft campaign
+    public CampaignDTO updateCampaign(Long id, CampaignRequest req, Long userId) {
+        Campaign campaign = campaignRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Campaign not found"));
+
+        // Only owner can edit
+        if (!campaign.getCreatedBy().equals(userId)) {
+            throw new RuntimeException("You are not the owner of this campaign");
+        }
+
+        // Only DRAFT campaigns can be edited
+        if (campaign.getStatus() != Campaign.CampaignStatus.DRAFT) {
+            throw new RuntimeException(
+                    "Only DRAFT campaigns can be edited. Current status: "
+                            + campaign.getStatus());
+        }
+
+        // Validate group still has contacts
+        Long count = contactServiceClient.getContactCount(req.getGroupId());
+        if (count == 0) {
+            throw new RuntimeException("Group has no contacts");
+        }
+
+        campaign.setName(req.getName());
+        campaign.setMessage(req.getMessage());
+        campaign.setGroupId(req.getGroupId());
+        campaign.setType(Campaign.CampaignType.valueOf(req.getType()));
+
+        if (req.getScheduledAt() != null) {
+            campaign.setScheduledAt(req.getScheduledAt());
+            campaign.setStatus(Campaign.CampaignStatus.SCHEDULED);
+        }
+
+        return CampaignDTO.from(campaignRepository.save(campaign));
+    }
+
+    // Submit draft for approval
+    public CampaignDTO submitForApproval(Long id, Long userId) {
+        Campaign campaign = campaignRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Campaign not found"));
+
+        if (!campaign.getCreatedBy().equals(userId)) {
+            throw new RuntimeException("You are not the owner of this campaign");
+        }
+
+        if (campaign.getStatus() != Campaign.CampaignStatus.DRAFT) {
+            throw new RuntimeException(
+                    "Only DRAFT campaigns can be submitted. Current status: "
+                            + campaign.getStatus());
+        }
+
+        campaign.setStatus(Campaign.CampaignStatus.PENDING_APPROVAL);
+        return CampaignDTO.from(campaignRepository.save(campaign));
+    }
+
+    // Delete a draft campaign
+    public void deleteCampaign(Long id, Long userId) {
+        Campaign campaign = campaignRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Campaign not found"));
+
+        if (!campaign.getCreatedBy().equals(userId)) {
+            throw new RuntimeException("You are not the owner of this campaign");
+        }
+
+        if (campaign.getStatus() != Campaign.CampaignStatus.DRAFT) {
+            throw new RuntimeException("Only DRAFT campaigns can be deleted");
+        }
+
+        campaignRepository.deleteById(id);
     }
 }

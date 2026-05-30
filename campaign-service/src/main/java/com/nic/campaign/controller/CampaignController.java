@@ -71,4 +71,39 @@ public class CampaignController {
         campaignService.updateCampaignStatus(id, status);
         return ResponseEntity.ok().build();
     }
+
+    // Internal — called by report-service without token
+    @GetMapping("/internal/{id}")
+    public ResponseEntity<CampaignDTO> getCampaignInternal(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.getCampaignById(id));
+    }
+
+    // Edit draft campaign
+    @PutMapping("/{id}")
+    public ResponseEntity<CampaignDTO> updateCampaign(
+            @PathVariable Long id,
+            @Valid @RequestBody CampaignRequest req,
+            @RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtUtil.extractUserId(authHeader.substring(7));
+        return ResponseEntity.ok(campaignService.updateCampaign(id, req, userId));
+    }
+
+    // Submit draft for approval
+    @PutMapping("/{id}/submit")
+    public ResponseEntity<CampaignDTO> submitForApproval(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtUtil.extractUserId(authHeader.substring(7));
+        return ResponseEntity.ok(campaignService.submitForApproval(id, userId));
+    }
+
+    // Delete draft campaign
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCampaign(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtUtil.extractUserId(authHeader.substring(7));
+        campaignService.deleteCampaign(id, userId);
+        return ResponseEntity.ok("Campaign deleted");
+    }
 }
