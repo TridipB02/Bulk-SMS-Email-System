@@ -26,4 +26,6 @@ public class Contact {
     private ContactGroup group;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt;
 }

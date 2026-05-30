@@ -89,6 +89,27 @@ public class ContactController {
         return ResponseEntity.ok(contactService.getPhoneNumbersByGroup(groupId));
     }
 
+    @GetMapping("/internal/groups/{groupId}/emails")
+    public ResponseEntity<List<String>> getEmails(@PathVariable Long groupId) {
+        return ResponseEntity.ok(contactService.getEmailsByGroup(groupId));
+    }
+
+    // Search contacts
+    @GetMapping("/groups/{groupId}/contacts/search")
+    public ResponseEntity<List<ContactDTO>> searchContacts(
+            @PathVariable Long groupId,
+            @RequestParam String keyword) {
+        return ResponseEntity.ok(contactService.searchContacts(groupId, keyword));
+    }
+
+    // Update contact
+    @PutMapping("/contacts/{contactId}")
+    public ResponseEntity<ContactDTO> updateContact(
+            @PathVariable Long contactId,
+            @Valid @RequestBody ContactRequest req) {
+        return ResponseEntity.ok(contactService.updateContact(contactId, req));
+    }
+
     // ─── Helper ───────────────────────────────────────────
 
     private Long extractUserId(String authHeader) {
