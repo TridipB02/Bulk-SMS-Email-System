@@ -29,15 +29,11 @@ public class MessagingService {
     private final EmailService emailService;
     private final RabbitTemplate rabbitTemplate;
 
-    // ─── RabbitMQ Consumer ────────────────────────────────
-
     @RabbitListener(queues = RabbitMQConfig.CAMPAIGN_QUEUE)
     public void handleCampaignDispatch(CampaignDispatchEvent event) {
         log.info("Received campaign dispatch event: campaignId={}", event.getCampaignId());
 
         try {
-
-            // Fetch recipients based on message type
             List<String> recipients = event.getType().equals("EMAIL")
                     ? contactServiceClient.getEmails(event.getGroupId())
                     : contactServiceClient.getPhoneNumbers(event.getGroupId());
@@ -51,58 +47,56 @@ public class MessagingService {
             int sent = 0, failed = 0;
 
             for (String recipient : recipients) {
-                MessageLog log = new MessageLog();
-                log.setCampaignId(event.getCampaignId());
-                log.setGroupId(event.getGroupId());
-                log.setCreatedBy(event.getCreatedBy());
-                log.setRecipient(recipient);
-                log.setMessage(event.getMessage());
-                log.setType(MessageLog.MessageType.valueOf(event.getType()));
+                MessageLog messageLog = new MessageLog();
+                messageLog.setCampaignId(event.getCampaignId());
+                messageLog.setGroupId(event.getGroupId());
+                messageLog.setCreatedBy(event.getCreatedBy());
+                messageLog.setRecipient(recipient);
+                messageLog.setMessage(event.getMessage());
+                messageLog.setType(MessageLog.MessageType.valueOf(event.getType()));
 
                 try {
-                    if (event.getType().equals("EMAIL")) {
-                        emailService.sendEmail(recipient, event.getMessage());
-                    } else {
-                        // SMS — log only for now (real SMS gateway integration goes here)
-                        simulateSms(recipient, event.getMessage());
-                    }
-
-                    log.setStatus(MessageLog.MessageStatus.SENT);
-                    log.setSentAt(LocalDateTime.now());
+                    sendMessage(messageLog, event.getType());
+                    messageLog.setStatus(MessageLog.MessageStatus.SENT);
+                    messageLog.setSentAt(LocalDateTime.now());
                     sent++;
-
                 } catch (Exception e) {
-                    log.setStatus(MessageLog.MessageStatus.FAILED);
-                    log.setFailureReason(e.getMessage());
+                    messageLog.setStatus(MessageLog.MessageStatus.FAILED);
+                    messageLog.setFailureReason(e.getMessage());
+                    messageLog.setRetryCount(0);
+                    messageLog.setMaxRetries(3);
+                    messageLog.setNextRetryAt(LocalDateTime.now().plusMinutes(2));
                     failed++;
                 }
 
-                messageLogRepository.save(log);
+                messageLogRepository.save(messageLog);
             }
 
-            // Update campaign status
             String finalStatus = failed == 0 ? "SENT" : (sent == 0 ? "FAILED" : "SENT");
             campaignServiceClient.updateCampaignStatus(event.getCampaignId(), finalStatus);
 
-            // Publish notification event
             publishNotificationEvent(event.getCreatedBy(), event.getCampaignId(), sent, failed);
-
-            // Publish billing deduction event
             publishBillingEvent(event.getCreatedBy(), sent);
 
-            this.log.info("Campaign {} processed. Sent={}, Failed={}",
+            log.info("Campaign {} processed. Sent={}, Failed={}",
                     event.getCampaignId(), sent, failed);
 
         } catch (Exception e) {
-            this.log.error("Failed to process campaign {}: {}",
+            log.error("Failed to process campaign {}: {}",
                     event.getCampaignId(), e.getMessage());
-
             campaignServiceClient.updateCampaignStatus(event.getCampaignId(), "FAILED");
         }
     }
 
+    private void sendMessage(MessageLog messageLog, String type) {
+        if (type.equals("EMAIL")) {
+            emailService.sendEmail(messageLog.getRecipient(), messageLog.getMessage());
+        } else {
+            simulateSms(messageLog.getRecipient(), messageLog.getMessage());
+        }
+    }
+
     private void simulateSms(String phoneNumber, String message) {
-        // Placeholder — replace with real SMS gateway (Twilio, AWS SNS, etc.)
         log.info("SMS sent to {}: {}", phoneNumber, message);
     }
 
@@ -113,7 +107,6 @@ public class MessagingService {
                 "message", "Campaign completed. Sent: " + sent + ", Failed: " + failed,
                 "type", "CAMPAIGN_COMPLETED"
         );
-
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.NOTIFICATION_EXCHANGE,
                 RabbitMQConfig.NOTIFICATION_ROUTING_KEY,
@@ -127,15 +120,12 @@ public class MessagingService {
                 "amount", sentCount,
                 "description", "SMS campaign - " + sentCount + " messages sent"
         );
-
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.BILLING_EXCHANGE,
                 RabbitMQConfig.BILLING_ROUTING_KEY,
                 event
         );
     }
-
-    // ─── REST endpoints ───────────────────────────────────
 
     public List<MessageLogDTO> getLogsByCampaign(Long campaignId) {
         return messageLogRepository.findByCampaignId(campaignId)
@@ -154,14 +144,8 @@ public class MessagingService {
     public Map<String, Long> getCampaignStats(Long campaignId) {
         long sent = messageLogRepository.countByCampaignIdAndStatus(
                 campaignId, MessageLog.MessageStatus.SENT);
-
         long failed = messageLogRepository.countByCampaignIdAndStatus(
                 campaignId, MessageLog.MessageStatus.FAILED);
-
-        return Map.of(
-                "sent", sent,
-                "failed", failed,
-                "total", sent + failed
-        );
+        return Map.of("sent", sent, "failed", failed, "total", sent + failed);
     }
 }

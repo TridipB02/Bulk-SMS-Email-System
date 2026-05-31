@@ -13,7 +13,6 @@ public class MessageLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Plain Longs — no FK to other services
     private Long campaignId;
     private Long groupId;
     private Long createdBy;
@@ -34,6 +33,10 @@ public class MessageLog {
 
     private LocalDateTime sentAt;
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private int retryCount = 0;
+    private int maxRetries = 3;
+    private LocalDateTime nextRetryAt;
 
     public enum MessageType {
         SMS, EMAIL
