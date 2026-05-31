@@ -14,6 +14,28 @@ public class RabbitMQConfig {
     public static final String BILLING_EXCHANGE = "billing.exchange";
     public static final String BILLING_QUEUE = "billing.deduct.queue";
     public static final String BILLING_ROUTING_KEY = "billing.deduct";
+    public static final String LOW_BALANCE_EXCHANGE = "lowbalance.exchange";
+    public static final String LOW_BALANCE_QUEUE = "lowbalance.queue";
+    public static final String LOW_BALANCE_ROUTING_KEY = "lowbalance.alert";
+
+    // Add these beans
+    @Bean
+    public DirectExchange lowBalanceExchange() {
+        return new DirectExchange(LOW_BALANCE_EXCHANGE);
+    }
+
+    @Bean
+    public Queue lowBalanceQueue() {
+        return QueueBuilder.durable(LOW_BALANCE_QUEUE).build();
+    }
+
+    @Bean
+    public Binding lowBalanceBinding() {
+        return BindingBuilder
+                .bind(lowBalanceQueue())
+                .to(lowBalanceExchange())
+                .with(LOW_BALANCE_ROUTING_KEY);
+    }
 
     @Bean
     public DirectExchange billingExchange() {

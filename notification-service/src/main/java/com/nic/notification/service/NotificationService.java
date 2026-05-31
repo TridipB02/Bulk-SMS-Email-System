@@ -65,6 +65,40 @@ public class NotificationService {
         }
     }
 
+    @RabbitListener(queues = RabbitMQConfig.LOW_BALANCE_QUEUE)
+    public void handleLowBalanceAlert(Map<String, Object> eventMap) {
+        log.info("Received low balance alert: {}", eventMap);
+
+        try {
+            Long userId = Long.valueOf(eventMap.get("userId").toString());
+            String message = eventMap.get("message").toString();
+            String type = eventMap.get("type").toString();
+
+            // Save notification to DB
+            Notification notification = new Notification();
+            notification.setUserId(userId);
+            notification.setMessage(message);
+            notification.setType(type);
+            notificationRepository.save(notification);
+
+            // Fetch user email and send alert
+            String userEmail = userServiceClient.getUserEmail(userId);
+            if (userEmail != null) {
+                emailService.sendNotificationEmail(
+                        userEmail,
+                        "⚠️ Low Credit Balance — Bulk SMS System",
+                        message
+                );
+                notification.setEmailSent(true);
+                notificationRepository.save(notification);
+                log.info("Low balance alert email sent to {}", userEmail);
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to process low balance alert: {}", e.getMessage());
+        }
+    }
+
     // ─── REST ─────────────────────────────────────────────
 
     public List<NotificationDTO> getMyNotifications(Long userId) {

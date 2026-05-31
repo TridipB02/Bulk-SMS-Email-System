@@ -11,10 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.Map;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class BillingService {
 
     private final CreditAccountRepository creditAccountRepository;
     private final BillingTransactionRepository transactionRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     // ─── RabbitMQ Consumer ────────────────────────────────
 
@@ -104,6 +106,11 @@ public class BillingService {
 
         log.info("Deducted {} credits for userId={}. Balance after={}",
                 amount, userId, account.getCredits());
+
+        // Check low balance after deduction
+        if (account.getCredits() <= 10) {
+            publishLowBalanceAlert(userId, account.getCredits());
+        }
     }
 
     // ─── Transactions ─────────────────────────────────────
@@ -120,5 +127,22 @@ public class BillingService {
                 .stream()
                 .map(TransactionDTO::from)
                 .collect(Collectors.toList());
+    }
+
+    private void publishLowBalanceAlert(Long userId, Integer currentBalance) {
+        Map<String, Object> event = Map.of(
+                "userId", userId,
+                "currentBalance", currentBalance,
+                "message", "Your credit balance is low. Current balance: "
+                        + currentBalance + " credits. Please top up.",
+                "type", "LOW_BALANCE"
+        );
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.LOW_BALANCE_EXCHANGE,
+                RabbitMQConfig.LOW_BALANCE_ROUTING_KEY,
+                event
+        );
+        log.info("Low balance alert published for userId={}, balance={}",
+                userId, currentBalance);
     }
 }

@@ -14,7 +14,27 @@ public class RabbitMQConfig {
     public static final String NOTIFICATION_EXCHANGE = "notification.exchange";
     public static final String NOTIFICATION_QUEUE = "notification.queue";
     public static final String NOTIFICATION_ROUTING_KEY = "notification.send";
+    public static final String LOW_BALANCE_EXCHANGE = "lowbalance.exchange";
+    public static final String LOW_BALANCE_QUEUE = "lowbalance.queue";
+    public static final String LOW_BALANCE_ROUTING_KEY = "lowbalance.alert";
 
+    @Bean
+    public DirectExchange lowBalanceExchange() {
+        return new DirectExchange(LOW_BALANCE_EXCHANGE);
+    }
+
+    @Bean
+    public Queue lowBalanceQueue() {
+        return QueueBuilder.durable(LOW_BALANCE_QUEUE).build();
+    }
+
+    @Bean
+    public Binding lowBalanceBinding() {
+        return BindingBuilder
+                .bind(lowBalanceQueue())
+                .to(lowBalanceExchange())
+                .with(LOW_BALANCE_ROUTING_KEY);
+    }
     @Bean
     public DirectExchange notificationExchange() {
         return new DirectExchange(NOTIFICATION_EXCHANGE);
