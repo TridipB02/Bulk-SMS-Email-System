@@ -1,5 +1,6 @@
 package com.nic.messaging.service;
 
+import com.nic.messaging.client.BillingServiceClient;
 import com.nic.messaging.client.CampaignServiceClient;
 import com.nic.messaging.client.ContactServiceClient;
 import com.nic.messaging.config.RabbitMQConfig;
@@ -26,6 +27,7 @@ public class MessagingService {
     private final MessageLogRepository messageLogRepository;
     private final ContactServiceClient contactServiceClient;
     private final CampaignServiceClient campaignServiceClient;
+    private final BillingServiceClient billingServiceClient;
     private final EmailService emailService;
     private final RabbitTemplate rabbitTemplate;
 
@@ -42,6 +44,47 @@ public class MessagingService {
                 log.warn("No recipients found for groupId={}", event.getGroupId());
                 campaignServiceClient.updateCampaignStatus(event.getCampaignId(), "FAILED");
                 return;
+            }
+
+            // Check balance before sending
+            Integer balance = billingServiceClient.getBalance(event.getCreatedBy());
+            if (balance <= 0) {
+                log.warn("Insufficient balance for userId={}. Balance={}",
+                        event.getCreatedBy(), balance);
+
+                Map<String, Object> notification = Map.of(
+                        "userId", event.getCreatedBy(),
+                        "campaignId", event.getCampaignId(),
+                        "message", "Campaign failed — your credit balance is zero. Please top up.",
+                        "type", "INSUFFICIENT_BALANCE"
+                );
+                rabbitTemplate.convertAndSend(
+                        RabbitMQConfig.NOTIFICATION_EXCHANGE,
+                        RabbitMQConfig.NOTIFICATION_ROUTING_KEY,
+                        notification
+                );
+                campaignServiceClient.updateCampaignStatus(event.getCampaignId(), "FAILED");
+                return;
+            }
+
+            // Warn if balance less than recipients
+            if (balance < recipients.size()) {
+                log.warn("Low balance for userId={}. Balance={}, Recipients={}",
+                        event.getCreatedBy(), balance, recipients.size());
+
+                Map<String, Object> notification = Map.of(
+                        "userId", event.getCreatedBy(),
+                        "campaignId", event.getCampaignId(),
+                        "message", "Warning — your balance (" + balance
+                                + " credits) is less than recipients ("
+                                + recipients.size() + "). Campaign may not complete fully.",
+                        "type", "LOW_BALANCE_WARNING"
+                );
+                rabbitTemplate.convertAndSend(
+                        RabbitMQConfig.NOTIFICATION_EXCHANGE,
+                        RabbitMQConfig.NOTIFICATION_ROUTING_KEY,
+                        notification
+                );
             }
 
             int sent = 0, failed = 0;

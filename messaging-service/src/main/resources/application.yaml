@@ -41,6 +41,8 @@ services:
     url: ${CONTACT_SERVICE_URL:http://localhost:8083}
   campaign-service:
     url: ${CAMPAIGN_SERVICE_URL:http://localhost:8084}
+  billing-service:
+    url: ${BILLING_SERVICE_URL:http://localhost:8086}
 
 logging:
   level:

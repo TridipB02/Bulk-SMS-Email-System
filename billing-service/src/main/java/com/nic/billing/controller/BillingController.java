@@ -49,4 +49,9 @@ public class BillingController {
     public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
         return ResponseEntity.ok(billingService.getAllTransactions());
     }
+
+    @GetMapping("/internal/balance/{userId}")
+    public ResponseEntity<CreditAccountDTO> getBalanceInternal(@PathVariable Long userId) {
+        return ResponseEntity.ok(billingService.getOrCreateAccount(userId));
+    }
 }
