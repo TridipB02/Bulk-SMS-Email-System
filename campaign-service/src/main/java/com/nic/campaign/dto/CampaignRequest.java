@@ -20,4 +20,6 @@ public class CampaignRequest {
     private String type = "SMS";
 
     private LocalDateTime scheduledAt;
+
+    private String timezone = "Asia/Kolkata";
 }

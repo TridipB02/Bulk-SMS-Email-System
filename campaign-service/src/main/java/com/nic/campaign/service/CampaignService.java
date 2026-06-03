@@ -8,7 +8,8 @@ import com.nic.campaign.repository.CampaignRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,13 @@ public class CampaignService {
         campaign.setType(Campaign.CampaignType.valueOf(req.getType()));
 
         if (req.getScheduledAt() != null) {
-            campaign.setScheduledAt(req.getScheduledAt());
+            // Convert from user's timezone to UTC for storage
+            String tz = req.getTimezone() != null ? req.getTimezone() : "Asia/Kolkata";
+            ZonedDateTime userTime = req.getScheduledAt()
+                    .atZone(ZoneId.of(tz));
+            ZonedDateTime utcTime = userTime.withZoneSameInstant(ZoneId.of("UTC"));
+            campaign.setScheduledAt(utcTime.toLocalDateTime());
+            campaign.setTimezone(tz);
             campaign.setStatus(Campaign.CampaignStatus.SCHEDULED);
         } else {
             campaign.setStatus(Campaign.CampaignStatus.DRAFT);
@@ -69,7 +76,26 @@ public class CampaignService {
         Campaign campaign = campaignRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Campaign not found"));
 
-        campaign.setStatus(Campaign.CampaignStatus.APPROVED);
+        if (campaign.getScheduledAt() != null
+                && campaign.getScheduledAt().isAfter(java.time.LocalDateTime.now())) {
+            // Keep as SCHEDULED — dispatcher will fire it at the right time
+            campaign.setStatus(Campaign.CampaignStatus.SCHEDULED);
+        } else {
+            campaign.setStatus(Campaign.CampaignStatus.APPROVED);
+            // Publish to RabbitMQ immediately
+            CampaignDispatchEvent event = new CampaignDispatchEvent(
+                    campaign.getId(),
+                    campaign.getGroupId(),
+                    campaign.getMessage(),
+                    campaign.getType().name(),
+                    campaign.getCreatedBy()
+            );
+            rabbitTemplate.convertAndSend(
+                    RabbitMQConfig.CAMPAIGN_EXCHANGE,
+                    RabbitMQConfig.CAMPAIGN_ROUTING_KEY,
+                    event
+            );
+        }
         campaignRepository.save(campaign);
 
         // Publish event to messaging-service via RabbitMQ
@@ -166,7 +192,12 @@ public class CampaignService {
         campaign.setType(Campaign.CampaignType.valueOf(req.getType()));
 
         if (req.getScheduledAt() != null) {
-            campaign.setScheduledAt(req.getScheduledAt());
+            String tz = req.getTimezone() != null ? req.getTimezone() : "Asia/Kolkata";
+            ZonedDateTime userTime = req.getScheduledAt()
+                    .atZone(ZoneId.of(tz));
+            ZonedDateTime utcTime = userTime.withZoneSameInstant(ZoneId.of("UTC"));
+            campaign.setScheduledAt(utcTime.toLocalDateTime());
+            campaign.setTimezone(tz);
             campaign.setStatus(Campaign.CampaignStatus.SCHEDULED);
         }
 
@@ -182,9 +213,10 @@ public class CampaignService {
             throw new RuntimeException("You are not the owner of this campaign");
         }
 
-        if (campaign.getStatus() != Campaign.CampaignStatus.DRAFT) {
+        if (campaign.getStatus() != Campaign.CampaignStatus.DRAFT
+                && campaign.getStatus() != Campaign.CampaignStatus.SCHEDULED) {
             throw new RuntimeException(
-                    "Only DRAFT campaigns can be submitted. Current status: "
+                    "Only DRAFT or SCHEDULED campaigns can be submitted. Current status: "
                             + campaign.getStatus());
         }
 

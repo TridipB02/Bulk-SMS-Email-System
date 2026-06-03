@@ -41,6 +41,9 @@ public class Campaign {
 
     private LocalDateTime sentAt;
 
+    @Column(nullable = false)
+    private String timezone = "Asia/Kolkata";
+
     public enum CampaignStatus {
         DRAFT, PENDING_APPROVAL, APPROVED, REJECTED, SENDING, SENT, FAILED, SCHEDULED
     }

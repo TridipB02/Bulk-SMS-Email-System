@@ -16,6 +16,7 @@ public class CampaignDTO {
     private LocalDateTime scheduledAt;
     private LocalDateTime createdAt;
     private LocalDateTime sentAt;
+    private String timezone;
 
     public static CampaignDTO from(Campaign c) {
         CampaignDTO dto = new CampaignDTO();
@@ -29,6 +30,7 @@ public class CampaignDTO {
         dto.setScheduledAt(c.getScheduledAt());
         dto.setCreatedAt(c.getCreatedAt());
         dto.setSentAt(c.getSentAt());
+        dto.setTimezone(c.getTimezone());
         return dto;
     }
 }
