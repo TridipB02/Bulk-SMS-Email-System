@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nic-notification-service
+    ports:
+      - "8087:8087"
+    environment:
+      DB_HOST: nic-postgres
+      DB_USER: postgres
+      DB_PASS: YOUR_POSTGRESS_PASSWORD
+      JWT_SECRET: YOUR_JWT_SECRET_KEY
+      RABBITMQ_HOST: nic-rabbitmq
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      MAIL_USERNAME: YOUR_MAIL@email.com
+      MAIL_PASSWORD: YOUR_GMAIL_APP_PASSWORD
+      USER_SERVICE_URL: http://nic-user-service:8082
+    networks:
+      - nic-network
+    restart: on-failure
+
+networks:
+  nic-network:
+    external: true

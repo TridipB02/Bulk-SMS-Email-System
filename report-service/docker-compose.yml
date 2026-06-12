@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  report-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nic-report-service
+    ports:
+      - "8088:8088"
+    environment:
+      JWT_SECRET: YOUR_JWT_SECRET_KEY
+      MESSAGING_SERVICE_URL: http://nic-messaging-service:8085
+      CAMPAIGN_SERVICE_URL: http://nic-campaign-service:8084
+    networks:
+      - nic-network
+    restart: on-failure
+
+networks:
+  nic-network:
+    external: true

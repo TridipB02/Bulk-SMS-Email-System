@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nic-api-gateway
+    ports:
+      - "8888:8888"
+    environment:
+      AUTH_SERVICE_URL: http://nic-auth-service:8081
+      USER_SERVICE_URL: http://nic-user-service:8082
+      CONTACT_SERVICE_URL: http://nic-contact-service:8083
+      CAMPAIGN_SERVICE_URL: http://nic-campaign-service:8084
+      MESSAGING_SERVICE_URL: http://nic-messaging-service:8085
+      BILLING_SERVICE_URL: http://nic-billing-service:8086
+      NOTIFICATION_SERVICE_URL: http://nic-notification-service:8087
+      REPORT_SERVICE_URL: http://nic-report-service:8088
+    networks:
+      - nic-network
+    restart: on-failure
+
+networks:
+  nic-network:
+    external: true

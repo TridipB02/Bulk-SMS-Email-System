@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nic-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: nic-postgres
+      DB_USER: postgres
+      DB_PASS: YOUR_POSTGRESS_PASSWORD
+      JWT_SECRET: YOUR_JWT_SECRET_KEY
+      MAIL_USERNAME: YOUR_MAIL@email.com
+      MAIL_PASSWORD: YOUR_GMAIL_APP_PASSWORD
+      USER_SERVICE_URL: http://nic-user-service:8082
+    networks:
+      - nic-network
+    restart: on-failure
+
+networks:
+  nic-network:
+    external: true

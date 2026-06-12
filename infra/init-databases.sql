@@ -1,0 +1,7 @@
+CREATE DATABASE authdb;
+CREATE DATABASE userdb;
+CREATE DATABASE contactdb;
+CREATE DATABASE campaigndb;
+CREATE DATABASE messagingdb;
+CREATE DATABASE billingdb;
+CREATE DATABASE notificationdb;

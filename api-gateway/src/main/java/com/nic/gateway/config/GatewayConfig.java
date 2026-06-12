@@ -1,6 +1,7 @@
 package com.nic.gateway.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -18,33 +19,57 @@ import java.util.List;
 @Slf4j
 public class GatewayConfig {
 
+    @Value("${AUTH_SERVICE_URL:http://localhost:8081}")
+    private String authServiceUrl;
+
+    @Value("${USER_SERVICE_URL:http://localhost:8082}")
+    private String userServiceUrl;
+
+    @Value("${CONTACT_SERVICE_URL:http://localhost:8083}")
+    private String contactServiceUrl;
+
+    @Value("${CAMPAIGN_SERVICE_URL:http://localhost:8084}")
+    private String campaignServiceUrl;
+
+    @Value("${MESSAGING_SERVICE_URL:http://localhost:8085}")
+    private String messagingServiceUrl;
+
+    @Value("${BILLING_SERVICE_URL:http://localhost:8086}")
+    private String billingServiceUrl;
+
+    @Value("${NOTIFICATION_SERVICE_URL:http://localhost:8087}")
+    private String notificationServiceUrl;
+
+    @Value("${REPORT_SERVICE_URL:http://localhost:8088}")
+    private String reportServiceUrl;
+
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("auth-service", r -> r
                         .path("/api/auth/**")
-                        .uri("http://localhost:8081"))
+                        .uri(authServiceUrl))
                 .route("user-service", r -> r
                         .path("/api/users/**")
-                        .uri("http://localhost:8082"))
+                        .uri(userServiceUrl))
                 .route("contact-service", r -> r
                         .path("/api/contacts/**")
-                        .uri("http://localhost:8083"))
+                        .uri(contactServiceUrl))
                 .route("campaign-service", r -> r
                         .path("/api/campaigns/**")
-                        .uri("http://localhost:8084"))
+                        .uri(campaignServiceUrl))
                 .route("messaging-service", r -> r
                         .path("/api/messages/**")
-                        .uri("http://localhost:8085"))
+                        .uri(messagingServiceUrl))
                 .route("billing-service", r -> r
                         .path("/api/billing/**")
-                        .uri("http://localhost:8086"))
+                        .uri(billingServiceUrl))
                 .route("notification-service", r -> r
                         .path("/api/notifications/**")
-                        .uri("http://localhost:8087"))
+                        .uri(notificationServiceUrl))
                 .route("report-service", r -> r
                         .path("/api/reports/**")
-                        .uri("http://localhost:8088"))
+                        .uri(reportServiceUrl))
                 .build();
     }
 

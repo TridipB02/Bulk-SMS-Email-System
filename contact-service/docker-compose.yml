@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  contact-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nic-contact-service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: nic-postgres
+      DB_USER: postgres
+      DB_PASS: YOUR_POSTGRESS_PASSWORD
+      JWT_SECRET: YOUR_JWT_SECRET_KEY
+    networks:
+      - nic-network
+    restart: on-failure
+
+networks:
+  nic-network:
+    external: true
