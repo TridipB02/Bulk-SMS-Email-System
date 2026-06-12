@@ -19,8 +19,10 @@ public class CampaignController {
     private final CampaignService campaignService;
     private final JwtUtil jwtUtil;
 
-    // User creates a campaign
+    // ─── MAKER endpoints ──────────────────────────────────
+
     @PostMapping
+    @PreAuthorize("hasAnyRole('MAKER','ADMIN')")
     public ResponseEntity<CampaignDTO> createCampaign(
             @Valid @RequestBody CampaignRequest req,
             @RequestHeader("Authorization") String authHeader) {
@@ -28,58 +30,8 @@ public class CampaignController {
         return ResponseEntity.ok(campaignService.createCampaign(req, userId));
     }
 
-    // User gets their own campaigns
-    @GetMapping("/my")
-    public ResponseEntity<List<CampaignDTO>> getMyCampaigns(
-            @RequestHeader("Authorization") String authHeader) {
-        Long userId = jwtUtil.extractUserId(authHeader.substring(7));
-        return ResponseEntity.ok(campaignService.getMyCampaigns(userId));
-    }
-
-    // Get single campaign
-    @GetMapping("/{id}")
-    public ResponseEntity<CampaignDTO> getCampaign(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.getCampaignById(id));
-    }
-
-    // Admin gets all campaigns
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<CampaignDTO>> getAllCampaigns() {
-        return ResponseEntity.ok(campaignService.getAllCampaigns());
-    }
-
-    // Admin approves campaign — triggers RabbitMQ dispatch
-    @PutMapping("/{id}/approve")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CampaignDTO> approveCampaign(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.approveCampaign(id));
-    }
-
-    // Admin rejects campaign
-    @PutMapping("/{id}/reject")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CampaignDTO> rejectCampaign(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.rejectCampaign(id));
-    }
-
-    // Internal — called by messaging-service to update status
-    @PutMapping("/internal/{id}/status")
-    public ResponseEntity<Void> updateStatus(
-            @PathVariable Long id,
-            @RequestParam String status) {
-        campaignService.updateCampaignStatus(id, status);
-        return ResponseEntity.ok().build();
-    }
-
-    // Internal — called by report-service without token
-    @GetMapping("/internal/{id}")
-    public ResponseEntity<CampaignDTO> getCampaignInternal(@PathVariable Long id) {
-        return ResponseEntity.ok(campaignService.getCampaignById(id));
-    }
-
-    // Edit draft campaign
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('MAKER','ADMIN')")
     public ResponseEntity<CampaignDTO> updateCampaign(
             @PathVariable Long id,
             @Valid @RequestBody CampaignRequest req,
@@ -88,22 +40,105 @@ public class CampaignController {
         return ResponseEntity.ok(campaignService.updateCampaign(id, req, userId));
     }
 
-    // Submit draft for approval
     @PutMapping("/{id}/submit")
-    public ResponseEntity<CampaignDTO> submitForApproval(
+    @PreAuthorize("hasAnyRole('MAKER','ADMIN')")
+    public ResponseEntity<CampaignDTO> submitToChecker(
             @PathVariable Long id,
             @RequestHeader("Authorization") String authHeader) {
         Long userId = jwtUtil.extractUserId(authHeader.substring(7));
-        return ResponseEntity.ok(campaignService.submitForApproval(id, userId));
+        return ResponseEntity.ok(campaignService.submitToChecker(id, userId));
     }
 
-    // Delete draft campaign
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('MAKER','ADMIN')")
     public ResponseEntity<String> deleteCampaign(
             @PathVariable Long id,
             @RequestHeader("Authorization") String authHeader) {
         Long userId = jwtUtil.extractUserId(authHeader.substring(7));
         campaignService.deleteCampaign(id, userId);
         return ResponseEntity.ok("Campaign deleted");
+    }
+
+    // ─── CHECKER endpoints ────────────────────────────────
+
+    @PutMapping("/{id}/check")
+    @PreAuthorize("hasAnyRole('CHECKER','ADMIN')")
+    public ResponseEntity<CampaignDTO> checkCampaign(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.checkCampaign(id));
+    }
+
+    @PutMapping("/{id}/reject-checker")
+    @PreAuthorize("hasAnyRole('CHECKER','ADMIN')")
+    public ResponseEntity<CampaignDTO> rejectByChecker(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.rejectByChecker(id));
+    }
+
+    // ─── APPROVER endpoints ───────────────────────────────
+
+    @PutMapping("/{id}/approve")
+    @PreAuthorize("hasAnyRole('APPROVER','ADMIN')")
+    public ResponseEntity<CampaignDTO> approveCampaign(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.approveCampaign(id));
+    }
+
+    @PutMapping("/{id}/reject")
+    @PreAuthorize("hasAnyRole('APPROVER','ADMIN')")
+    public ResponseEntity<CampaignDTO> rejectByApprover(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.rejectByApprover(id));
+    }
+
+    // ─── ADMIN endpoints ──────────────────────────────────
+
+    @PutMapping("/{id}/admin-approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CampaignDTO> adminApprove(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.adminApprove(id));
+    }
+
+    @PutMapping("/{id}/admin-reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CampaignDTO> adminReject(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.adminReject(id));
+    }
+
+    // ─── Common endpoints ─────────────────────────────────
+
+    @GetMapping("/my")
+    public ResponseEntity<List<CampaignDTO>> getMyCampaigns(
+            @RequestHeader("Authorization") String authHeader) {
+        Long userId = jwtUtil.extractUserId(authHeader.substring(7));
+        return ResponseEntity.ok(campaignService.getMyCampaigns(userId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CampaignDTO> getCampaign(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.getCampaignById(id));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','CHECKER','APPROVER')")
+    public ResponseEntity<List<CampaignDTO>> getAllCampaigns() {
+        return ResponseEntity.ok(campaignService.getAllCampaigns());
+    }
+
+    @GetMapping("/status/{status}")
+    @PreAuthorize("hasAnyRole('ADMIN','CHECKER','APPROVER')")
+    public ResponseEntity<List<CampaignDTO>> getByStatus(@PathVariable String status) {
+        return ResponseEntity.ok(campaignService.getCampaignsByStatus(status));
+    }
+
+    // ─── Internal endpoints ───────────────────────────────
+
+    @GetMapping("/internal/{id}")
+    public ResponseEntity<CampaignDTO> getCampaignInternal(@PathVariable Long id) {
+        return ResponseEntity.ok(campaignService.getCampaignById(id));
+    }
+
+    @PutMapping("/internal/{id}/status")
+    public ResponseEntity<Void> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+        campaignService.updateCampaignStatus(id, status);
+        return ResponseEntity.ok().build();
     }
 }

@@ -29,11 +29,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;
+    private Role role = Role.MAKER;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public enum Role {
-        USER, ADMIN
+        ADMIN, MAKER, CHECKER, APPROVER
     }
 }

@@ -45,7 +45,16 @@ public class Campaign {
     private String timezone = "Asia/Kolkata";
 
     public enum CampaignStatus {
-        DRAFT, PENDING_APPROVAL, APPROVED, REJECTED, SENDING, SENT, FAILED, SCHEDULED
+        DRAFT,
+        PENDING_CHECKER,
+        CHECKED,
+        PENDING_APPROVAL,
+        APPROVED,
+        REJECTED,
+        SENDING,
+        SENT,
+        FAILED,
+        SCHEDULED
     }
 
     public enum CampaignType {
