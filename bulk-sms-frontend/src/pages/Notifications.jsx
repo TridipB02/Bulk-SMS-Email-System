@@ -8,31 +8,31 @@ import {
 
 const NOTIFICATION_CONFIG = {
     CAMPAIGN_COMPLETED: {
-        icon: Megaphone, color: '#4ade80',
-        bg: 'rgba(34,197,94,0.15)', label: 'Campaign'
+        icon: Megaphone, color: '#125a2c',
+        bg: '#93dba9', label: 'Campaign'
     },
     LOW_BALANCE: {
-        icon: CreditCard, color: '#fbbf24',
-        bg: 'rgba(234,179,8,0.15)', label: 'Billing'
+        icon: CreditCard, color: '#704800',
+        bg: '#f7d36b', label: 'Billing'
     },
     LOW_BALANCE_WARNING: {
-        icon: AlertTriangle, color: '#fb923c',
-        bg: 'rgba(249,115,22,0.15)', label: 'Warning'
+        icon: AlertTriangle, color: '#7a4108',
+        bg: '#fcb978', label: 'Warning'
     },
     INSUFFICIENT_BALANCE: {
-        icon: AlertTriangle, color: '#f87171',
-        bg: 'rgba(239,68,68,0.15)', label: 'Alert'
+        icon: AlertTriangle, color: '#7a1530',
+        bg: '#f193a6', label: 'Alert'
     },
     DEFAULT: {
-        icon: Info, color: '#60a5fa',
-        bg: 'rgba(37,99,235,0.15)', label: 'Info'
+        icon: Info, color: '#1f2f8a',
+        bg: '#aebcf5', label: 'Info'
     }
 };
 
 export default function Notifications() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all'); // all | unread
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => { fetchNotifications(); }, []);
 
@@ -63,12 +63,6 @@ export default function Notifications() {
         ? notifications.filter(n => !n.read)
         : notifications;
 
-    const cardStyle = {
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '16px', padding: '24px',
-    };
-
     const getTimeAgo = (dateStr) => {
         const diff = Date.now() - new Date(dateStr).getTime();
         const mins = Math.floor(diff / 60000);
@@ -84,11 +78,11 @@ export default function Notifications() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
             <div style={{ textAlign: 'center' }}>
                 <div style={{
-                    width: '44px', height: '44px', border: '3px solid rgba(255,255,255,0.1)',
+                    width: '44px', height: '44px', border: '3px solid #e2e7f7',
                     borderTopColor: '#3b82f6', borderRadius: '50%',
                     animation: 'spin 0.8s linear infinite', margin: '0 auto 16px'
                 }} />
-                <p style={{ color: '#475569', margin: '0' }}>Loading notifications...</p>
+                <p style={{ color: '#64748b', margin: '0', fontWeight: '600' }}>Loading notifications...</p>
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
         </div>
@@ -98,12 +92,12 @@ export default function Notifications() {
         <div style={{ maxWidth: '800px' }}>
 
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                 <div>
-                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#f1f5f9', margin: '0 0 4px' }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', margin: '0 0 4px' }}>
                         Notifications
                     </h1>
-                    <p style={{ color: '#475569', fontSize: '14px', margin: '0' }}>
+                    <p style={{ color: '#64748b', fontSize: '14px', margin: '0', fontWeight: '600' }}>
                         {unreadCount > 0
                             ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
                             : 'All caught up!'}
@@ -115,9 +109,9 @@ export default function Notifications() {
                         style={{
                             display: 'flex', alignItems: 'center', gap: '8px',
                             padding: '10px 18px', borderRadius: '10px',
-                            background: 'rgba(37,99,235,0.15)',
-                            border: '1px solid rgba(37,99,235,0.3)',
-                            color: '#60a5fa', fontSize: '13px', fontWeight: '600',
+                            background: '#dde3fb',
+                            border: 'none',
+                            color: '#2c3e9e', fontSize: '13px', fontWeight: '800',
                             cursor: 'pointer'
                         }}
                     >
@@ -129,8 +123,8 @@ export default function Notifications() {
             {/* Filter Tabs */}
             <div style={{
                 display: 'flex', gap: '8px', marginBottom: '20px',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'white',
+                border: '1px solid #eceefb',
                 borderRadius: '12px', padding: '6px', width: 'fit-content'
             }}>
                 {[
@@ -142,13 +136,9 @@ export default function Notifications() {
                         onClick={() => setFilter(tab.key)}
                         style={{
                             padding: '8px 20px', borderRadius: '8px', fontSize: '13px',
-                            fontWeight: '600', cursor: 'pointer', border: 'none',
-                            background: filter === tab.key
-                                ? 'linear-gradient(135deg, #2563eb, #1d4ed8)'
-                                : 'transparent',
-                            color: filter === tab.key ? 'white' : '#475569',
-                            boxShadow: filter === tab.key
-                                ? '0 4px 12px rgba(37,99,235,0.3)' : 'none',
+                            fontWeight: '800', cursor: 'pointer', border: 'none',
+                            background: filter === tab.key ? '#3b82f6' : 'transparent',
+                            color: filter === tab.key ? 'white' : '#64748b',
                             transition: 'all 0.2s'
                         }}
                     >
@@ -160,20 +150,27 @@ export default function Notifications() {
             {/* Notifications List */}
             {filtered.length === 0 ? (
                 <div style={{
-                    ...cardStyle, textAlign: 'center', padding: '80px 40px'
+                    background: '#aebcf5',
+                    borderRadius: '20px', padding: '80px 40px', textAlign: 'center',
+                    position: 'relative', overflow: 'hidden',
                 }}>
                     <div style={{
+                        position: 'absolute', top: '-40px', right: '-40px',
+                        width: '160px', height: '160px', borderRadius: '50%',
+                        background: 'rgba(255,255,255,0.25)',
+                    }} />
+                    <div style={{
                         width: '72px', height: '72px', borderRadius: '20px',
-                        background: 'rgba(37,99,235,0.1)', display: 'flex',
+                        background: 'rgba(255,255,255,0.55)', display: 'flex',
                         alignItems: 'center', justifyContent: 'center',
-                        margin: '0 auto 20px'
+                        margin: '0 auto 20px', position: 'relative',
                     }}>
-                        <Bell size={32} color="#3b82f6" />
+                        <Bell size={32} color="#1f2f8a" />
                     </div>
-                    <h3 style={{ color: '#f1f5f9', fontWeight: '700', fontSize: '18px', margin: '0 0 8px' }}>
+                    <h3 style={{ color: '#1f2f8a', fontWeight: '800', fontSize: '18px', margin: '0 0 8px', position: 'relative' }}>
                         {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
                     </h3>
-                    <p style={{ color: '#475569', margin: '0', fontSize: '14px' }}>
+                    <p style={{ color: '#2c3e9e', margin: '0', fontSize: '14px', fontWeight: '700', position: 'relative' }}>
                         {filter === 'unread'
                             ? 'You are all caught up!'
                             : 'Notifications will appear here when campaigns complete'}
@@ -190,24 +187,18 @@ export default function Notifications() {
                             <div
                                 key={notification.id}
                                 style={{
-                                    background: notification.read
-                                        ? 'rgba(255,255,255,0.03)'
-                                        : 'rgba(37,99,235,0.07)',
-                                    border: notification.read
-                                        ? '1px solid rgba(255,255,255,0.06)'
-                                        : '1px solid rgba(37,99,235,0.2)',
+                                    background: notification.read ? 'white' : '#eef4ff',
+                                    border: notification.read ? '1px solid #eceefb' : '1px solid #c7d2f9',
                                     borderRadius: '14px', padding: '18px 20px',
                                     transition: 'all 0.2s',
                                     position: 'relative'
                                 }}
                             >
-                                {/* Unread dot */}
                                 {!notification.read && (
                                     <div style={{
                                         position: 'absolute', top: '20px', right: '20px',
                                         width: '8px', height: '8px', borderRadius: '50%',
                                         background: '#3b82f6',
-                                        boxShadow: '0 0 8px rgba(59,130,246,0.6)'
                                     }} />
                                 )}
 
@@ -227,30 +218,30 @@ export default function Notifications() {
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
                                             <span style={{
                                                 padding: '2px 8px', borderRadius: '6px',
-                                                fontSize: '10px', fontWeight: '700',
+                                                fontSize: '10px', fontWeight: '800',
                                                 textTransform: 'uppercase', letterSpacing: '0.5px',
                                                 background: config.bg, color: config.color
                                             }}>
                                                 {config.label}
                                             </span>
                                             {notification.campaignId && (
-                                                <span style={{ color: '#334155', fontSize: '11px' }}>
+                                                <span style={{ color: '#64748b', fontSize: '11px', fontWeight: '700' }}>
                                                     Campaign #{notification.campaignId}
                                                 </span>
                                             )}
                                         </div>
 
                                         <p style={{
-                                            color: notification.read ? '#64748b' : '#e2e8f0',
+                                            color: notification.read ? '#475569' : '#1e293b',
                                             fontSize: '14px', margin: '0 0 8px',
-                                            lineHeight: '1.5', fontWeight: notification.read ? '400' : '500'
+                                            lineHeight: '1.5', fontWeight: notification.read ? '600' : '700'
                                         }}>
                                             {notification.message}
                                         </p>
 
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                                             <span style={{
-                                                color: '#334155', fontSize: '12px',
+                                                color: '#64748b', fontSize: '12px', fontWeight: '600',
                                                 display: 'flex', alignItems: 'center', gap: '4px'
                                             }}>
                                                 <Clock size={11} />
@@ -260,10 +251,10 @@ export default function Notifications() {
                                             </span>
                                             {notification.emailSent && (
                                                 <span style={{
-                                                    color: '#334155', fontSize: '12px',
+                                                    color: '#64748b', fontSize: '12px', fontWeight: '600',
                                                     display: 'flex', alignItems: 'center', gap: '4px'
                                                 }}>
-                                                    <Mail size={11} color="#475569" />
+                                                    <Mail size={11} color="#94a3b8" />
                                                     Email sent
                                                 </span>
                                             )}

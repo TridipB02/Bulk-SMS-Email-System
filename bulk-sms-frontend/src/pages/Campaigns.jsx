@@ -4,18 +4,18 @@ import toast from 'react-hot-toast';
 import {
     Megaphone, Plus, Send, Clock, CheckCircle,
     XCircle, Trash2, Edit3, X,
-    Calendar, Users, FileText, Eye, BarChart3
+    Calendar, FileText, Eye
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
-    DRAFT:            { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8',  label: 'Draft' },
-    PENDING_APPROVAL: { bg: 'rgba(234,179,8,0.15)',   color: '#fbbf24',  label: 'Pending' },
-    APPROVED:         { bg: 'rgba(37,99,235,0.15)',   color: '#60a5fa',  label: 'Approved' },
-    SCHEDULED:        { bg: 'rgba(14,165,233,0.15)',  color: '#38bdf8',  label: 'Scheduled' },
-    SENDING:          { bg: 'rgba(168,85,247,0.15)',  color: '#c084fc',  label: 'Sending' },
-    SENT:             { bg: 'rgba(34,197,94,0.15)',   color: '#4ade80',  label: 'Sent' },
-    FAILED:           { bg: 'rgba(239,68,68,0.15)',   color: '#f87171',  label: 'Failed' },
-    REJECTED:         { bg: 'rgba(239,68,68,0.15)',   color: '#f87171',  label: 'Rejected' },
+    DRAFT:            { bg: '#e7e8f2', color: '#454a63', label: 'Draft' },
+    PENDING_APPROVAL: { bg: '#fbe19a', color: '#8a5d0a', label: 'Pending' },
+    APPROVED:         { bg: '#c7d2f9', color: '#2c3e9e', label: 'Approved' },
+    SCHEDULED:        { bg: '#a9ddf0', color: '#0d5f80', label: 'Scheduled' },
+    SENDING:          { bg: '#e1d4fa', color: '#5b2bb0', label: 'Sending' },
+    SENT:             { bg: '#bce8cb', color: '#1c6b3b', label: 'Sent' },
+    FAILED:           { bg: '#f7b8c4', color: '#a31f3c', label: 'Failed' },
+    REJECTED:         { bg: '#f7b8c4', color: '#a31f3c', label: 'Rejected' },
 };
 
 export default function Campaigns() {
@@ -112,78 +112,48 @@ export default function Campaigns() {
         }
     };
 
-    // Stat cards — each with its own gradient like Dashboard
     const statCards = [
-        {
-            label: 'Total',
-            value: campaigns.length,
-            icon: Megaphone,
-            gradient: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
-            circleBg: '#a78bfa',
-        },
-        {
-            label: 'Sent',
-            value: campaigns.filter(c => c.status === 'SENT').length,
-            icon: Send,
-            gradient: 'linear-gradient(135deg, #064e3b, #059669)',
-            circleBg: '#6ee7b7',
-        },
-        {
-            label: 'Pending',
-            value: campaigns.filter(c => c.status === 'PENDING_APPROVAL').length,
-            icon: Clock,
-            gradient: 'linear-gradient(135deg, #78350f, #d97706)',
-            circleBg: '#fcd34d',
-        },
-        {
-            label: 'Draft',
-            value: campaigns.filter(c => c.status === 'DRAFT').length,
-            icon: FileText,
-            gradient: 'linear-gradient(135deg, #1e3a5f, #2563eb)',
-            circleBg: '#93c5fd',
-        },
-        {
-            label: 'Failed',
-            value: campaigns.filter(c => c.status === 'FAILED').length,
-            icon: XCircle,
-            gradient: 'linear-gradient(135deg, #7f1d1d, #dc2626)',
-            circleBg: '#fca5a5',
-        },
+        { label: 'Total', value: campaigns.length, icon: Megaphone, bg: '#aebcf5', color: '#1f2f8a' },
+        { label: 'Sent', value: campaigns.filter(c => c.status === 'SENT').length, icon: Send, bg: '#93dba9', color: '#125a2c' },
+        { label: 'Pending', value: campaigns.filter(c => c.status === 'PENDING_APPROVAL').length, icon: Clock, bg: '#f7d36b', color: '#704800' },
+        { label: 'Draft', value: campaigns.filter(c => c.status === 'DRAFT').length, icon: FileText, bg: '#a9ddf0', color: '#0d5f80' },
+        { label: 'Failed', value: campaigns.filter(c => c.status === 'FAILED').length, icon: XCircle, bg: '#f193a6', color: '#7a1530' },
     ];
 
     const inputStyle = {
         width: '100%', padding: '10px 14px',
-        background: 'rgba(255,255,255,0.06)',
-        border: '1px solid rgba(255,255,255,0.12)',
+        background: 'white',
+        border: '1.5px solid #e2e7f7',
         borderRadius: '10px', fontSize: '14px',
-        color: 'white', outline: 'none',
+        color: '#1e293b', outline: 'none',
         fontFamily: 'inherit', boxSizing: 'border-box',
+        fontWeight: '600',
     };
 
     const labelStyle = {
-        display: 'block', fontSize: '12px', fontWeight: '600',
-        color: '#94a3b8', marginBottom: '6px', textTransform: 'uppercase',
+        display: 'block', fontSize: '11px', fontWeight: '800',
+        color: '#64748b', marginBottom: '6px', textTransform: 'uppercase',
         letterSpacing: '0.5px'
     };
 
     const btnPrimary = {
         display: 'inline-flex', alignItems: 'center', gap: '8px',
         padding: '10px 20px', borderRadius: '10px', fontSize: '13px',
-        fontWeight: '600', cursor: 'pointer', border: 'none',
-        background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-        color: 'white', boxShadow: '0 4px 12px rgba(37,99,235,0.35)'
+        fontWeight: '800', cursor: 'pointer', border: 'none',
+        background: '#3b82f6',
+        color: 'white',
     };
 
     return (
         <div style={{ maxWidth: '1100px' }}>
 
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                 <div>
-                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#f1f5f9', margin: '0 0 6px', letterSpacing: '-0.4px' }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', margin: '0 0 4px', letterSpacing: '-0.4px' }}>
                         Campaigns
                     </h1>
-                    <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0', fontWeight: '500' }}>
+                    <p style={{ color: '#64748b', fontSize: '14px', margin: '0', fontWeight: '600' }}>
                         Create and manage your SMS &amp; email campaigns
                     </p>
                 </div>
@@ -192,34 +162,31 @@ export default function Campaigns() {
                 </button>
             </div>
 
-            {/* Stat Cards — 5 colored gradient cards */}
+            {/* Stat Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '14px', marginBottom: '24px' }}>
                 {statCards.map((card) => (
                     <div key={card.label} style={{
-                        background: card.gradient,
+                        background: card.bg,
                         borderRadius: '16px', padding: '18px',
                         position: 'relative', overflow: 'hidden',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        boxShadow: '0 4px 18px rgba(0,0,0,0.25)',
                     }}>
-                        {/* Decorative circle */}
                         <div style={{
                             position: 'absolute', top: '-22px', right: '-22px',
                             width: '80px', height: '80px', borderRadius: '50%',
-                            background: card.circleBg, opacity: 0.15,
+                            background: 'rgba(255,255,255,0.3)',
                         }} />
                         <div style={{
                             width: '36px', height: '36px', borderRadius: '10px',
-                            background: 'rgba(255,255,255,0.18)',
+                            background: 'rgba(255,255,255,0.55)',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            marginBottom: '12px',
+                            marginBottom: '12px', position: 'relative',
                         }}>
-                            <card.icon size={18} color="white" />
+                            <card.icon size={18} color={card.color} />
                         </div>
-                        <p style={{ color: 'white', fontSize: '30px', fontWeight: '800', margin: '0 0 3px', lineHeight: 1, letterSpacing: '-1px' }}>
+                        <p style={{ color: '#1e293b', fontSize: '28px', fontWeight: '800', margin: '0 0 2px', lineHeight: 1, position: 'relative' }}>
                             {card.value}
                         </p>
-                        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '12px', margin: '0', fontWeight: '600' }}>
+                        <p style={{ color: card.color, fontSize: '12px', margin: '0', fontWeight: '800', position: 'relative' }}>
                             {card.label}
                         </p>
                     </div>
@@ -228,24 +195,24 @@ export default function Campaigns() {
 
             {/* Campaign List */}
             {loading ? (
-                <div style={{ textAlign: 'center', padding: '60px', color: '#475569' }}>Loading campaigns...</div>
+                <div style={{ textAlign: 'center', padding: '60px', color: '#64748b', fontWeight: '600' }}>Loading campaigns...</div>
             ) : campaigns.length === 0 ? (
                 <div style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.07)',
+                    background: 'white',
+                    border: '1px solid #eceefb',
                     borderRadius: '20px', padding: '80px 40px', textAlign: 'center'
                 }}>
                     <div style={{
                         width: '72px', height: '72px', borderRadius: '20px',
-                        background: 'rgba(124,58,237,0.15)', display: 'flex',
+                        background: '#dde3fb', display: 'flex',
                         alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px'
                     }}>
-                        <Megaphone size={32} color="#a78bfa" />
+                        <Megaphone size={32} color="#2c3e9e" />
                     </div>
-                    <h3 style={{ color: '#f1f5f9', fontWeight: '700', fontSize: '18px', margin: '0 0 8px' }}>
+                    <h3 style={{ color: '#1e293b', fontWeight: '800', fontSize: '18px', margin: '0 0 8px' }}>
                         No campaigns yet
                     </h3>
-                    <p style={{ color: '#94a3b8', margin: '0 0 24px', fontSize: '14px', fontWeight: '500' }}>
+                    <p style={{ color: '#64748b', margin: '0 0 24px', fontSize: '14px', fontWeight: '600' }}>
                         Create your first campaign to start sending messages
                     </p>
                     <button onClick={openCreate} style={btnPrimary}>
@@ -260,70 +227,63 @@ export default function Campaigns() {
                             <div
                                 key={campaign.id}
                                 style={{
-                                    background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    background: 'white',
+                                    border: '1px solid #eceefb',
                                     borderRadius: '16px', padding: '20px',
                                     transition: 'all 0.2s',
                                 }}
-                                onMouseEnter={e => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.07)';
-                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.14)';
-                                }}
-                                onMouseLeave={e => {
-                                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-                                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                                }}
+                                onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(108,135,231,0.12)'}
+                                onMouseLeave={e => e.currentTarget.style.boxShadow = 'none'}
                             >
                                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
                                     {/* Left */}
                                     <div style={{ display: 'flex', gap: '14px', flex: 1, minWidth: 0 }}>
                                         <div style={{
                                             width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0,
-                                            background: campaign.type === 'EMAIL'
-                                                ? 'rgba(37,99,235,0.2)' : 'rgba(124,58,237,0.2)',
+                                            background: campaign.type === 'EMAIL' ? '#dde3fb' : '#e1d4fa',
                                             display: 'flex', alignItems: 'center', justifyContent: 'center'
                                         }}>
                                             {campaign.type === 'EMAIL'
-                                                ? <Send size={20} color="#60a5fa" />
-                                                : <Megaphone size={20} color="#a78bfa" />
+                                                ? <Send size={20} color="#2c3e9e" />
+                                                : <Megaphone size={20} color="#5b2bb0" />
                                             }
                                         </div>
                                         <div style={{ minWidth: 0, flex: 1 }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px', flexWrap: 'wrap' }}>
-                                                <h3 style={{ color: '#f1f5f9', fontWeight: '700', fontSize: '15px', margin: '0' }}>
+                                                <h3 style={{ color: '#1e293b', fontWeight: '800', fontSize: '15px', margin: '0' }}>
                                                     {campaign.name}
                                                 </h3>
                                                 <span style={{
                                                     padding: '3px 10px', borderRadius: '20px',
-                                                    fontSize: '11px', fontWeight: '700',
+                                                    fontSize: '11px', fontWeight: '800',
                                                     background: status.bg, color: status.color
                                                 }}>
                                                     {status.label}
                                                 </span>
                                                 <span style={{
                                                     padding: '3px 10px', borderRadius: '20px',
-                                                    fontSize: '11px', fontWeight: '600',
-                                                    background: 'rgba(255,255,255,0.07)', color: '#94a3b8'
+                                                    fontSize: '11px', fontWeight: '700',
+                                                    background: '#f1f2fa', color: '#64748b'
                                                 }}>
                                                     {campaign.type}
                                                 </span>
                                             </div>
-                                            <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: '400' }}>
+                                            <p style={{ color: '#475569', fontSize: '13px', margin: '0 0 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: '500' }}>
                                                 {campaign.message}
                                             </p>
                                             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                                                <span style={{ color: '#64748b', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <span style={{ color: '#64748b', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
                                                     <Calendar size={11} />
                                                     {new Date(campaign.createdAt).toLocaleDateString('en-IN')}
                                                 </span>
                                                 {campaign.scheduledAt && (
-                                                    <span style={{ color: '#38bdf8', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <span style={{ color: '#0d5f80', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
                                                         <Clock size={11} />
                                                         Scheduled: {new Date(campaign.scheduledAt).toLocaleString('en-IN')}
                                                     </span>
                                                 )}
                                                 {campaign.sentAt && (
-                                                    <span style={{ color: '#4ade80', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    <span style={{ color: '#1c6b3b', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
                                                         <CheckCircle size={11} />
                                                         Sent: {new Date(campaign.sentAt).toLocaleString('en-IN')}
                                                     </span>
@@ -338,27 +298,27 @@ export default function Campaigns() {
                                             <>
                                                 <button onClick={() => openEdit(campaign)} style={{
                                                     padding: '8px 14px', borderRadius: '9px',
-                                                    background: 'rgba(255,255,255,0.07)',
-                                                    border: '1px solid rgba(255,255,255,0.1)',
-                                                    color: '#94a3b8', cursor: 'pointer', fontSize: '12px',
-                                                    fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px'
+                                                    background: '#f1f2fa',
+                                                    border: 'none',
+                                                    color: '#475569', cursor: 'pointer', fontSize: '12px',
+                                                    fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px'
                                                 }}>
                                                     <Edit3 size={13} /> Edit
                                                 </button>
                                                 <button onClick={() => handleSubmitForApproval(campaign.id)} style={{
                                                     padding: '8px 14px', borderRadius: '9px',
-                                                    background: 'rgba(37,99,235,0.2)',
-                                                    border: '1px solid rgba(37,99,235,0.35)',
-                                                    color: '#60a5fa', cursor: 'pointer', fontSize: '12px',
-                                                    fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px'
+                                                    background: '#dde3fb',
+                                                    border: 'none',
+                                                    color: '#2c3e9e', cursor: 'pointer', fontSize: '12px',
+                                                    fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px'
                                                 }}>
                                                     <Send size={13} /> Submit
                                                 </button>
                                                 <button onClick={() => handleDelete(campaign.id)} style={{
                                                     padding: '8px', borderRadius: '9px',
-                                                    background: 'rgba(239,68,68,0.1)',
-                                                    border: '1px solid rgba(239,68,68,0.2)',
-                                                    color: '#f87171', cursor: 'pointer',
+                                                    background: '#fde3e8',
+                                                    border: 'none',
+                                                    color: '#d44d6a', cursor: 'pointer',
                                                     display: 'flex', alignItems: 'center'
                                                 }}>
                                                     <Trash2 size={14} />
@@ -368,10 +328,10 @@ export default function Campaigns() {
                                         {campaign.status === 'SENT' && (
                                             <button onClick={() => setSelectedCampaign(campaign)} style={{
                                                 padding: '8px 14px', borderRadius: '9px',
-                                                background: 'rgba(34,197,94,0.1)',
-                                                border: '1px solid rgba(34,197,94,0.2)',
-                                                color: '#4ade80', cursor: 'pointer', fontSize: '12px',
-                                                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px'
+                                                background: '#d9f2e0',
+                                                border: 'none',
+                                                color: '#1c6b3b', cursor: 'pointer', fontSize: '12px',
+                                                fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px'
                                             }}>
                                                 <Eye size={13} /> View Report
                                             </button>
@@ -388,36 +348,33 @@ export default function Campaigns() {
             {showModal && (
                 <div style={{
                     position: 'fixed', inset: 0,
-                    background: 'rgba(0,0,0,0.7)',
-                    backdropFilter: 'blur(8px)',
+                    background: 'rgba(30,41,59,0.5)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     zIndex: 1000, padding: '20px'
                 }}>
                     <div style={{
-                        background: 'linear-gradient(160deg,#0f172a,#1a2744)',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: 'lightgrey',
                         borderRadius: '22px', padding: '32px',
                         width: '100%', maxWidth: '520px',
-                        boxShadow: '0 30px 70px rgba(0,0,0,0.5)',
+                        boxShadow: '0 30px 70px rgba(30,41,59,0.25)',
                     }}>
-                        {/* Accent bar */}
                         <div style={{
-                            height: '3px', borderRadius: '2px',
-                            background: 'linear-gradient(90deg,#2563eb,#7c3aed)',
+                            height: '4px', borderRadius: '2px',
+                            background: 'linear-gradient(90deg,#3b82f6,#7c3aed)',
                             marginBottom: '24px',
                         }} />
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
                             <div>
-                                <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#f1f5f9', margin: '0 0 4px' }}>
+                                <h3 style={{ fontSize: '20px', fontWeight: '800', color: '#1e293b', margin: '0 0 4px' }}>
                                     {editCampaign ? 'Edit Campaign' : 'New Campaign'}
                                 </h3>
-                                <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0', fontWeight: '500' }}>
+                                <p style={{ color: '#64748b', fontSize: '13px', margin: '0', fontWeight: '600' }}>
                                     {editCampaign ? 'Update your draft campaign' : 'Campaign starts as Draft'}
                                 </p>
                             </div>
                             <button onClick={() => { setShowModal(false); resetForm(); }} style={{
-                                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)',
+                                background: '#f1f2fa', border: 'none',
                                 cursor: 'pointer', width: '36px', height: '36px',
                                 borderRadius: '10px', display: 'flex', alignItems: 'center',
                                 justifyContent: 'center', color: '#64748b'
@@ -440,17 +397,17 @@ export default function Campaigns() {
                                         <label style={labelStyle}>Type *</label>
                                         <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}
                                                 style={{ ...inputStyle, cursor: 'pointer' }}>
-                                            <option value="EMAIL" style={{ background: '#0f172a' }}>Email</option>
-                                            <option value="SMS" style={{ background: '#0f172a' }}>SMS</option>
+                                            <option value="EMAIL">Email</option>
+                                            <option value="SMS">SMS</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label style={labelStyle}>Contact Group *</label>
                                         <select value={form.groupId} onChange={e => setForm({ ...form, groupId: e.target.value })}
                                                 required style={{ ...inputStyle, cursor: 'pointer' }}>
-                                            <option value="" style={{ background: '#0f172a' }}>Select group</option>
+                                            <option value="">Select group</option>
                                             {groups.map(g => (
-                                                <option key={g.id} value={g.id} style={{ background: '#0f172a' }}>
+                                                <option key={g.id} value={g.id}>
                                                     {g.name} ({g.contactCount})
                                                 </option>
                                             ))}
@@ -464,7 +421,7 @@ export default function Campaigns() {
                                               onChange={e => setForm({ ...form, message: e.target.value })}
                                               rows={4}
                                               style={{ ...inputStyle, resize: 'vertical', lineHeight: '1.5' }} />
-                                    <p style={{ color: '#475569', fontSize: '11px', margin: '4px 0 0', textAlign: 'right' }}>
+                                    <p style={{ color: '#94a3b8', fontSize: '11px', margin: '4px 0 0', textAlign: 'right', fontWeight: '600' }}>
                                         {form.message.length} characters
                                     </p>
                                 </div>
@@ -473,26 +430,26 @@ export default function Campaigns() {
                                         <label style={labelStyle}>Schedule At (optional)</label>
                                         <input type="datetime-local" value={form.scheduledAt}
                                                onChange={e => setForm({ ...form, scheduledAt: e.target.value })}
-                                               style={{ ...inputStyle, colorScheme: 'dark' }} />
+                                               style={inputStyle} />
                                     </div>
                                     <div>
                                         <label style={labelStyle}>Timezone</label>
                                         <select value={form.timezone} onChange={e => setForm({ ...form, timezone: e.target.value })}
                                                 style={{ ...inputStyle, cursor: 'pointer' }}>
-                                            <option value="Asia/Kolkata" style={{ background: '#0f172a' }}>IST (Asia/Kolkata)</option>
-                                            <option value="UTC" style={{ background: '#0f172a' }}>UTC</option>
-                                            <option value="Asia/Dubai" style={{ background: '#0f172a' }}>GST (Dubai)</option>
-                                            <option value="America/New_York" style={{ background: '#0f172a' }}>EST (New York)</option>
+                                            <option value="Asia/Kolkata">IST (Asia/Kolkata)</option>
+                                            <option value="UTC">UTC</option>
+                                            <option value="Asia/Dubai">GST (Dubai)</option>
+                                            <option value="America/New_York">EST (New York)</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)',
+                                    background: '#eef1fd', border: 'none',
                                     borderRadius: '10px', padding: '12px 14px',
                                     display: 'flex', gap: '10px', alignItems: 'flex-start'
                                 }}>
-                                    <FileText size={15} color="#60a5fa" style={{ flexShrink: 0, marginTop: '1px' }} />
-                                    <p style={{ color: '#93c5fd', fontSize: '12px', margin: '0', lineHeight: '1.5' }}>
+                                    <FileText size={15} color="#2c3e9e" style={{ flexShrink: 0, marginTop: '1px' }} />
+                                    <p style={{ color: '#2c3e9e', fontSize: '12px', margin: '0', lineHeight: '1.5', fontWeight: '600' }}>
                                         Campaign will be saved as <strong>Draft</strong>. Submit it for admin approval to send.
                                         {form.scheduledAt && ' Scheduled campaigns fire automatically at the set time.'}
                                     </p>
@@ -500,9 +457,9 @@ export default function Campaigns() {
                                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                                     <button type="button" onClick={() => { setShowModal(false); resetForm(); }} style={{
                                         padding: '10px 20px', borderRadius: '10px',
-                                        background: 'rgba(255,255,255,0.07)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        color: '#94a3b8', fontSize: '13px', fontWeight: '600', cursor: 'pointer'
+                                        background: '#f1f2fa',
+                                        border: 'none',
+                                        color: '#475569', fontSize: '13px', fontWeight: '700', cursor: 'pointer'
                                     }}>
                                         Cancel
                                     </button>

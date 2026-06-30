@@ -7,7 +7,12 @@ export default function Layout() {
         <div style={{
             display: 'flex',
             height: '100vh',
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f1f3d 100%)',
+            background: '#eef2fc',
+            backgroundImage: `
+                radial-gradient(circle at 20% 20%, rgba(167,139,250,0.10) 0%, transparent 35%),
+                radial-gradient(circle at 80% 0%, rgba(109,141,245,0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 100%, rgba(82,194,133,0.08) 0%, transparent 45%)
+            `,
         }}>
             <Sidebar />
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -16,8 +21,6 @@ export default function Layout() {
                     flex: 1,
                     overflowY: 'auto',
                     padding: '28px',
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(255,255,255,0.1) transparent',
                 }}>
                     <Outlet />
                 </main>

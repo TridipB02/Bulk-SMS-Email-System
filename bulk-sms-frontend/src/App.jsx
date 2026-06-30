@@ -11,6 +11,7 @@ import Reports from './pages/Reports';
 import Billing from './pages/Billing';
 import Notifications from './pages/Notifications';
 import AdminPanel from './pages/AdminPanel';
+import Users from './pages/Users';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -41,11 +42,16 @@ const AppRoutes = () => {
           <Route path="reports" element={<Reports />} />
           <Route path="billing" element={<Billing />} />
           <Route path="notifications" element={<Notifications />} />
-          <Route path="admin" element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminPanel />
-            </ProtectedRoute>
-          } />
+            <Route path="admin" element={
+                <ProtectedRoute adminOnly={true}>
+                    <AdminPanel />
+                </ProtectedRoute>
+            } />
+            <Route path="users" element={
+                <ProtectedRoute adminOnly={true}>
+                    <Users />
+                </ProtectedRoute>
+            } />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
