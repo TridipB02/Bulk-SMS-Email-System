@@ -57,11 +57,11 @@ export default function Billing() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
             <div style={{ textAlign: 'center' }}>
                 <div style={{
-                    width: '44px', height: '44px', border: '3px solid rgba(255,255,255,0.1)',
-                    borderTopColor: '#d97706', borderRadius: '50%',
+                    width: '44px', height: '44px', border: '3px solid #e2e7f7',
+                    borderTopColor: '#3b82f6', borderRadius: '50%',
                     animation: 'spin 0.8s linear infinite', margin: '0 auto 16px'
                 }} />
-                <p style={{ color: '#94a3b8', margin: '0', fontWeight: '500' }}>Loading billing data...</p>
+                <p style={{ color: '#64748b', margin: '0', fontWeight: '600' }}>Loading billing data...</p>
             </div>
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
@@ -74,11 +74,11 @@ export default function Billing() {
         <div style={{ maxWidth: '900px' }}>
 
             {/* Header */}
-            <div style={{ marginBottom: '28px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#f1f5f9', margin: '0 0 6px', letterSpacing: '-0.4px' }}>
+            <div style={{ marginBottom: '24px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#1e293b', margin: '0 0 4px' }}>
                     Billing &amp; Credits
                 </h1>
-                <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0', fontWeight: '500' }}>
+                <p style={{ color: '#64748b', fontSize: '14px', margin: '0', fontWeight: '600' }}>
                     Manage your credit balance and view transaction history
                 </p>
             </div>
@@ -86,109 +86,99 @@ export default function Billing() {
             {/* Top 3 cards */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '24px' }}>
 
-                {/* ── Yellow Credit Balance Card ── */}
+                {/* Balance */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #78350f, #b45309, #d97706)',
+                    background: '#f7d36b',
                     borderRadius: '18px', padding: '24px',
-                    boxShadow: '0 8px 28px rgba(217,119,6,0.3)',
                     position: 'relative', overflow: 'hidden',
-                    border: '1px solid rgba(255,255,255,0.1)',
                 }}>
-                    <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: '#fcd34d', opacity: 0.12 }} />
-                    <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-                        <CreditCard size={16} color="#fcd34d" />
-                        <p style={{ color: '#fcd34d', fontSize: '11px', fontWeight: '700', margin: '0', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)' }} />
+                    <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '70px', height: '70px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', position: 'relative' }}>
+                        <CreditCard size={16} color="#704800" />
+                        <p style={{ color: '#704800', fontSize: '11px', fontWeight: '800', margin: '0', textTransform: 'uppercase', letterSpacing: '1px' }}>
                             Current Balance
                         </p>
                     </div>
-                    <p style={{ color: 'white', fontSize: '44px', fontWeight: '900', margin: '0 0 4px', lineHeight: 1, letterSpacing: '-2px' }}>
+                    <p style={{ color: '#1e293b', fontSize: '44px', fontWeight: '900', margin: '0 0 4px', lineHeight: 1, letterSpacing: '-2px', position: 'relative' }}>
                         {balance?.credits ?? 0}
                     </p>
-                    <p style={{ color: '#fde68a', fontSize: '13px', margin: '0 0 18px', fontWeight: '500' }}>
+                    <p style={{ color: '#8a5d0a', fontSize: '13px', margin: '0 0 18px', fontWeight: '700', position: 'relative' }}>
                         credits available
                     </p>
-
                     {balance?.credits <= 10 && (
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: '6px',
-                            background: 'rgba(239,68,68,0.25)', borderRadius: '8px',
-                            padding: '8px 12px', marginBottom: '16px',
-                            border: '1px solid rgba(239,68,68,0.3)',
+                            background: '#f7b8c4', borderRadius: '8px',
+                            padding: '8px 12px', marginBottom: '16px', position: 'relative',
                         }}>
-                            <AlertTriangle size={13} color="#fca5a5" />
-                            <p style={{ color: '#fca5a5', fontSize: '12px', margin: '0', fontWeight: '600' }}>
+                            <AlertTriangle size={13} color="#a31f3c" />
+                            <p style={{ color: '#a31f3c', fontSize: '12px', margin: '0', fontWeight: '700' }}>
                                 Low balance — please top up
                             </p>
                         </div>
                     )}
-
                     <button onClick={() => setShowTopUp(true)} style={{
                         width: '100%', padding: '11px',
-                        background: 'rgba(255,255,255,0.15)',
-                        color: 'white', border: '1px solid rgba(255,255,255,0.25)',
-                        borderRadius: '11px', fontSize: '13px', fontWeight: '700',
+                        background: '#8a5d0a',
+                        color: 'white', border: 'none',
+                        borderRadius: '11px', fontSize: '13px', fontWeight: '800',
                         cursor: 'pointer', display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', gap: '8px', transition: 'all 0.2s',
+                        justifyContent: 'center', gap: '8px', position: 'relative',
                     }}
-                            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+                            onMouseEnter={e => e.currentTarget.style.background = '#704800'}
+                            onMouseLeave={e => e.currentTarget.style.background = '#8a5d0a'}
                     >
                         <Plus size={15} /> Top Up Credits
                     </button>
                 </div>
 
-                {/* ── Total Topped Up ── */}
+                {/* Total Topped Up */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #064e3b, #059669)',
+                    background: '#93dba9',
                     borderRadius: '18px', padding: '24px',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    boxShadow: '0 4px 20px rgba(5,150,105,0.25)',
                     position: 'relative', overflow: 'hidden',
                 }}>
-                    <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: '#6ee7b7', opacity: 0.12 }} />
+                    <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)' }} />
                     <div style={{
                         width: '42px', height: '42px', borderRadius: '12px',
-                        background: 'rgba(255,255,255,0.18)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
+                        background: 'rgba(255,255,255,0.55)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', position: 'relative',
                     }}>
-                        <TrendingUp size={21} color="white" />
+                        <TrendingUp size={21} color="#125a2c" />
                     </div>
-                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: '700', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <p style={{ color: '#0c3d1f', fontSize: '12px', fontWeight: '800', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px', position: 'relative' }}>
                         Total Topped Up
                     </p>
-                    <p style={{ color: 'white', fontSize: '34px', fontWeight: '800', margin: '0 0 4px', letterSpacing: '-1px' }}>
+                    <p style={{ color: '#1e293b', fontSize: '34px', fontWeight: '800', margin: '0 0 4px', letterSpacing: '-1px', position: 'relative' }}>
                         {totalCredits}
                     </p>
-                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', margin: '0', fontWeight: '500' }}>
+                    <p style={{ color: '#125a2c', fontSize: '12px', margin: '0', fontWeight: '700', position: 'relative' }}>
                         credits added
                     </p>
                 </div>
 
-                {/* ── Total Used ── */}
+                {/* Total Used */}
                 <div style={{
-                    background: 'linear-gradient(135deg, #7f1d1d, #dc2626)',
+                    background: '#f193a6',
                     borderRadius: '18px', padding: '24px',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    boxShadow: '0 4px 20px rgba(220,38,38,0.25)',
                     position: 'relative', overflow: 'hidden',
                 }}>
-                    <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: '#fca5a5', opacity: 0.12 }} />
+                    <div style={{ position: 'absolute', top: '-28px', right: '-28px', width: '110px', height: '110px', borderRadius: '50%', background: 'rgba(255,255,255,0.3)' }} />
                     <div style={{
                         width: '42px', height: '42px', borderRadius: '12px',
-                        background: 'rgba(255,255,255,0.18)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px',
+                        background: 'rgba(255,255,255,0.55)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', position: 'relative',
                     }}>
-                        <TrendingDown size={21} color="white" />
+                        <TrendingDown size={21} color="#7a1530" />
                     </div>
-                    <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px', fontWeight: '700', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <p style={{ color: '#7a1530', fontSize: '12px', fontWeight: '800', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.5px', position: 'relative' }}>
                         Total Used
                     </p>
-                    <p style={{ color: 'white', fontSize: '34px', fontWeight: '800', margin: '0 0 4px', letterSpacing: '-1px' }}>
+                    <p style={{ color: '#1e293b', fontSize: '34px', fontWeight: '800', margin: '0 0 4px', letterSpacing: '-1px', position: 'relative' }}>
                         {totalDebits}
                     </p>
-                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', margin: '0', fontWeight: '500' }}>
+                    <p style={{ color: '#7a1530', fontSize: '12px', margin: '0', fontWeight: '700', position: 'relative' }}>
                         credits spent
                     </p>
                 </div>
@@ -196,26 +186,26 @@ export default function Billing() {
 
             {/* Transaction History */}
             <div style={{
-                background: 'rgba(15,23,42,0.85)',
-                backdropFilter: 'blur(20px)',
+                background: 'white',
                 borderRadius: '18px', overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.07)',
-                boxShadow: '0 4px 24px rgba(0,0,0,0.25)',
+                border: '1px solid #eceefb',
             }}>
-                {/* Panel header */}
-                <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                    padding: '20px 24px', borderBottom: '1px solid #f4f6fd',
+                    display: 'flex', alignItems: 'center', gap: '12px'
+                }}>
                     <div style={{
                         width: '34px', height: '34px', borderRadius: '10px',
-                        background: 'linear-gradient(135deg,#78350f,#d97706)',
+                        background: '#fbe19a',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                        <Clock size={16} color="white" />
+                        <Clock size={16} color="#8a5d0a" />
                     </div>
                     <div>
-                        <h3 style={{ color: '#f1f5f9', fontWeight: '700', fontSize: '15px', margin: '0' }}>
+                        <h3 style={{ color: '#1e293b', fontWeight: '800', fontSize: '15px', margin: '0' }}>
                             Transaction History
                         </h3>
-                        <p style={{ color: '#94a3b8', fontSize: '12px', margin: '2px 0 0', fontWeight: '500' }}>
+                        <p style={{ color: '#64748b', fontSize: '12px', margin: '2px 0 0', fontWeight: '600' }}>
                             {transactions.length} transaction{transactions.length !== 1 ? 's' : ''} total
                         </p>
                     </div>
@@ -225,49 +215,48 @@ export default function Billing() {
                     <div style={{ textAlign: 'center', padding: '56px 20px' }}>
                         <div style={{
                             width: '64px', height: '64px', borderRadius: '18px',
-                            background: 'rgba(217,119,6,0.1)',
+                            background: '#fbe19a',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px',
                         }}>
-                            <Clock size={28} color="#d97706" />
+                            <Clock size={28} color="#8a5d0a" />
                         </div>
-                        <p style={{ color: '#e2e8f0', fontWeight: '600', margin: '0 0 4px' }}>No transactions yet</p>
-                        <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0' }}>Top up credits to see transactions here</p>
+                        <p style={{ color: '#1e293b', fontWeight: '700', margin: '0 0 4px' }}>No transactions yet</p>
+                        <p style={{ color: '#64748b', fontSize: '13px', margin: '0', fontWeight: '600' }}>Top up credits to see transactions here</p>
                     </div>
                 ) : (
-                    <div style={{ padding: '0 8px' }}>
+                    <div>
                         {transactions.map((tx, i) => (
                             <div key={tx.id} style={{
                                 display: 'flex', alignItems: 'center',
                                 justifyContent: 'space-between',
-                                padding: '16px 16px',
-                                borderBottom: i < transactions.length - 1
-                                    ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                                padding: '16px 24px',
+                                borderBottom: i < transactions.length - 1 ? '1px solid #f4f6fd' : 'none',
                                 transition: 'background 0.15s',
                             }}
-                                 onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                                 onMouseEnter={e => e.currentTarget.style.background = '#fafbff'}
                                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                                     <div style={{
                                         width: '42px', height: '42px', borderRadius: '11px',
-                                        background: tx.type === 'CREDIT'
-                                            ? 'rgba(5,150,105,0.18)' : 'rgba(220,38,38,0.18)',
+                                        background: tx.type === 'CREDIT' ? '#d9f2e0' : '#fde3e8',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                                     }}>
                                         {tx.type === 'CREDIT'
-                                            ? <TrendingUp size={18} color="#6ee7b7" />
-                                            : <TrendingDown size={18} color="#fca5a5" />
+                                            ? <TrendingUp size={18} color="#1c6b3b" />
+                                            : <TrendingDown size={18} color="#d44d6a" />
                                         }
                                     </div>
                                     <div>
-                                        <p style={{ color: '#f1f5f9', fontWeight: '600', fontSize: '14px', margin: '0 0 3px' }}>
+                                        <p style={{ color: '#1e293b', fontWeight: '700', fontSize: '14px', margin: '0 0 3px' }}>
                                             {tx.description}
                                         </p>
-                                        <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0', fontWeight: '500' }}>
+                                        <p style={{ color: '#64748b', fontSize: '12px', margin: '0', fontWeight: '600' }}>
                                             {new Date(tx.createdAt).toLocaleString('en-IN')}
                                             {tx.balanceAfter !== null && (
-                                                <span style={{ color: '#475569' }}>
-                                                    {' '}• Balance after: <span style={{ color: '#fcd34d', fontWeight: '600' }}>{tx.balanceAfter}</span>
+                                                <span style={{ color: '#94a3b8' }}>
+                                                    {' '}• Balance after:{' '}
+                                                    <span style={{ color: '#8a5d0a', fontWeight: '700' }}>{tx.balanceAfter}</span>
                                                 </span>
                                             )}
                                         </p>
@@ -276,17 +265,16 @@ export default function Billing() {
                                 <div style={{ textAlign: 'right', flexShrink: 0 }}>
                                     <p style={{
                                         fontSize: '18px', fontWeight: '800', margin: '0 0 4px',
-                                        color: tx.type === 'CREDIT' ? '#6ee7b7' : '#fca5a5',
+                                        color: tx.type === 'CREDIT' ? '#1c6b3b' : '#d44d6a',
                                         letterSpacing: '-0.5px',
                                     }}>
                                         {tx.type === 'CREDIT' ? '+' : '-'}{tx.amount}
                                     </p>
                                     <span style={{
                                         padding: '3px 9px', borderRadius: '6px', fontSize: '10px',
-                                        fontWeight: '700', textTransform: 'uppercase',
-                                        background: tx.type === 'CREDIT'
-                                            ? 'rgba(5,150,105,0.18)' : 'rgba(220,38,38,0.18)',
-                                        color: tx.type === 'CREDIT' ? '#6ee7b7' : '#fca5a5',
+                                        fontWeight: '800', textTransform: 'uppercase',
+                                        background: tx.type === 'CREDIT' ? '#d9f2e0' : '#fde3e8',
+                                        color: tx.type === 'CREDIT' ? '#1c6b3b' : '#d44d6a',
                                     }}>
                                         {tx.type}
                                     </span>
@@ -297,38 +285,35 @@ export default function Billing() {
                 )}
             </div>
 
-            {/* ── Top Up Modal ── */}
+            {/* Top Up Modal */}
             {showTopUp && (
                 <div style={{
                     position: 'fixed', inset: 0,
-                    background: 'rgba(0,0,0,0.7)',
-                    backdropFilter: 'blur(8px)',
+                    background: 'rgba(30,41,59,0.5)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     zIndex: 1000, padding: '20px',
                 }}>
                     <div style={{
-                        background: 'linear-gradient(160deg,#0f172a,#1a2744)',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: '#fffbeb',
                         borderRadius: '22px', padding: '32px',
                         width: '100%', maxWidth: '420px',
-                        boxShadow: '0 30px 70px rgba(0,0,0,0.5)',
+                        boxShadow: '0 30px 70px rgba(30,41,59,0.25)',
                     }}>
-                        {/* Accent bar — yellow */}
-                        <div style={{ height: '3px', borderRadius: '2px', background: 'linear-gradient(90deg,#d97706,#fcd34d)', marginBottom: '24px' }} />
+                        <div style={{ height: '4px', borderRadius: '2px', background: '#f7d36b', marginBottom: '24px' }} />
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
                             <div>
-                                <h3 style={{ color: '#f1f5f9', fontWeight: '700', fontSize: '20px', margin: '0 0 4px' }}>
+                                <h3 style={{ color: '#1e293b', fontWeight: '800', fontSize: '20px', margin: '0 0 4px' }}>
                                     Top Up Credits
                                 </h3>
-                                <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0', fontWeight: '500' }}>
-                                    Current balance: <strong style={{ color: '#fcd34d' }}>{balance?.credits}</strong> credits
+                                <p style={{ color: '#64748b', fontSize: '13px', margin: '0', fontWeight: '600' }}>
+                                    Current balance: <strong style={{ color: '#8a5d0a' }}>{balance?.credits}</strong> credits
                                 </p>
                             </div>
                             <button onClick={() => { setShowTopUp(false); setTopUpAmount(''); }} style={{
-                                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)',
+                                background: '#fbe19a', border: 'none',
                                 cursor: 'pointer', width: '34px', height: '34px', borderRadius: '9px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8a5d0a',
                             }}>
                                 <X size={16} />
                             </button>
@@ -336,7 +321,7 @@ export default function Billing() {
 
                         {/* Quick amounts */}
                         <div style={{ marginBottom: '20px' }}>
-                            <p style={{ color: '#64748b', fontSize: '12px', fontWeight: '700', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            <p style={{ color: '#64748b', fontSize: '12px', fontWeight: '800', margin: '0 0 10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                                 Quick Select
                             </p>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
@@ -345,11 +330,10 @@ export default function Billing() {
                                     return (
                                         <button key={amt} onClick={() => setTopUpAmount(String(amt))} style={{
                                             padding: '11px', borderRadius: '10px', fontSize: '15px',
-                                            fontWeight: '700', cursor: 'pointer',
-                                            background: active ? 'linear-gradient(135deg,#78350f,#d97706)' : 'rgba(255,255,255,0.07)',
-                                            border: active ? '1px solid #d97706' : '1px solid rgba(255,255,255,0.1)',
-                                            color: active ? 'white' : '#94a3b8',
-                                            boxShadow: active ? '0 4px 12px rgba(217,119,6,0.3)' : 'none',
+                                            fontWeight: '800', cursor: 'pointer',
+                                            background: active ? '#8a5d0a' : 'white',
+                                            border: 'none',
+                                            color: active ? 'white' : '#475569',
                                             transition: 'all 0.15s',
                                         }}>
                                             {amt}
@@ -361,7 +345,7 @@ export default function Billing() {
 
                         <form onSubmit={handleTopUp}>
                             <div style={{ marginBottom: '24px' }}>
-                                <label style={{ display: 'block', color: '#64748b', fontSize: '12px', fontWeight: '700', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                <label style={{ display: 'block', color: '#64748b', fontSize: '12px', fontWeight: '800', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                                     Custom Amount
                                 </label>
                                 <input
@@ -370,32 +354,30 @@ export default function Billing() {
                                     onChange={e => setTopUpAmount(e.target.value)}
                                     style={{
                                         width: '100%', padding: '12px 14px',
-                                        background: 'rgba(255,255,255,0.06)',
-                                        border: '1.5px solid rgba(255,255,255,0.1)',
+                                        background: 'white',
+                                        border: 'none',
                                         borderRadius: '10px', fontSize: '16px',
-                                        color: 'white', outline: 'none',
-                                        fontFamily: 'inherit', boxSizing: 'border-box', fontWeight: '700',
+                                        color: '#1e293b', outline: 'none',
+                                        fontFamily: 'inherit', boxSizing: 'border-box', fontWeight: '800',
                                     }}
                                 />
                             </div>
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 <button type="button" onClick={() => { setShowTopUp(false); setTopUpAmount(''); }} style={{
                                     flex: 1, padding: '12px',
-                                    background: 'rgba(255,255,255,0.07)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
-                                    color: '#94a3b8', borderRadius: '10px',
-                                    fontSize: '14px', fontWeight: '600', cursor: 'pointer',
+                                    background: 'white', border: 'none',
+                                    color: '#475569', borderRadius: '10px',
+                                    fontSize: '14px', fontWeight: '700', cursor: 'pointer'
                                 }}>
                                     Cancel
                                 </button>
                                 <button type="submit" disabled={submitting} style={{
                                     flex: 1, padding: '12px',
-                                    background: 'linear-gradient(135deg,#78350f,#d97706)',
+                                    background: '#8a5d0a',
                                     border: 'none', color: 'white', borderRadius: '10px',
-                                    fontSize: '14px', fontWeight: '700', cursor: 'pointer',
-                                    boxShadow: '0 4px 14px rgba(217,119,6,0.35)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                    fontSize: '14px', fontWeight: '800', cursor: 'pointer',
                                     opacity: submitting ? 0.7 : 1,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                 }}>
                                     <Plus size={16} />
                                     {submitting ? 'Processing...' : `Add ${topUpAmount || 0} Credits`}
